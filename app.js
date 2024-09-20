@@ -41,6 +41,12 @@ const operate = (a, b, oper) => {
 
 // function when equal is clicked
 equal.addEventListener("click", () => {
+  if (!firstNumber || !operator) {
+    return displayButton.textContent = "error";
+
+
+    
+  }
   const a = parseFloat(firstNumber);
   const b = parseFloat(secondNumber);
   const result = operate(a, b, operator);
@@ -56,23 +62,25 @@ equal.addEventListener("click", () => {
 operators.forEach((oper) => {
   oper.addEventListener("click", (e) => {
     const operatorValue = e.target.value;
-    
-    console.log("Before if:", firstNumber, secondNumber, operator);
+
+    console.log("Before if:", firstNumber, operator, secondNumber);
     
     if (firstNumber && secondNumber && operator) {
       const a = parseFloat(firstNumber);
       const b = parseFloat(secondNumber);
       const result = operate(a, b, operator);
       firstNumber = result.toString()
-      secondNumber = ""
+      secondNumber = ""      
       displayButton.textContent = firstNumber;
+      operator = operatorValue;      
       console.log("Intermediate result:", firstNumber);
-      
     }
+    console.log("after if:", firstNumber, operator, secondNumber);
     operator = operatorValue;
+
     console.log("operator value:", operator);
-    isOperatorClicked = true
-    displayButton.textContent = operator;
+    // isOperatorClicked = true
+    // displayButton.textContent = operator;
   });
 });
 
@@ -88,11 +96,9 @@ buttons.forEach((butt) => {
       console.log("display (first #)", firstNumber);
       isOperatorClicked = true
     } else {
-      displayButton.textContent = "";
+      // displayButton.textContent = "";
       secondNumber += buttonValue;
       displayButton.textContent = secondNumber;
-      // isOperatorClicked = false;
-
       console.log("display (second #)", secondNumber);
     }
   });
