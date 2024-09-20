@@ -2,6 +2,7 @@ let firstNumber = "";
 let secondNumber = "";
 let operator = "";
 let isOperatorClicked = false;
+let isSecondNumberClicked = false;
 
 const add = (a, b) => a + b;
 
@@ -19,7 +20,11 @@ const displayButton = displayContainer.querySelector(".display-button");
 const equal = keypadContainer.querySelector(".equal");
 const clear = keypadContainer.querySelector(".clear");
 const sign = keypadContainer.querySelector(".sign");
-const percent = keypadContainer.querySelector(".percentage")
+const percent = keypadContainer.querySelector(".percentage");
+const buttons = keypadContainer.querySelectorAll(".operand");
+const operators = keypadContainer.querySelectorAll(".operator");
+const point = keypadContainer.querySelector(".point");
+
 const operate = (a, b, oper) => {
   switch (oper) {
     case "+":
@@ -29,56 +34,69 @@ const operate = (a, b, oper) => {
     case "*":
       return multiply(a, b);
     case "/":
-      // return divide(a, b)
-     const num = divide(a, b)
-     return Number(num.toFixed(10))
+      const num = divide(a, b);
+      return Number(num.toFixed(10));
   }
 };
 
+// function when equal is clicked
 equal.addEventListener("click", () => {
-  const a = parseInt(firstNumber);
-  const b = parseInt(secondNumber);
+  const a = parseFloat(firstNumber);
+  const b = parseFloat(secondNumber);
   const result = operate(a, b, operator);
   displayButton.textContent = result;
+  firstNumber = result.toString();
   console.log("operator result:", result);
+  console.log("first # after first calc:", firstNumber);
+  secondNumber = "";
+  operator = "";
 });
 
-const displayNumbers = () => {
-  const buttons = keypadContainer.querySelectorAll(".operand");
-
-  buttons.forEach((butt) => {
-    butt.addEventListener("click", (e) => {
-      const buttonValue = e.target.value;
-      console.log("button value:", buttonValue);
-
-      if (!isOperatorClicked) {
-        firstNumber += buttonValue;
-        displayButton.textContent = firstNumber;
-        console.log("display (first #)", firstNumber);
-      } else {
-        displayButton.textContent = "";
-        secondNumber += buttonValue;
-        displayButton.textContent = secondNumber;
-        console.log("display (second #)", secondNumber);
-      }
-    });
+// function when operators are clicked
+operators.forEach((oper) => {
+  oper.addEventListener("click", (e) => {
+    const operatorValue = e.target.value;
+    
+    console.log("Before if:", firstNumber, secondNumber, operator);
+    
+    if (firstNumber && secondNumber && operator) {
+      const a = parseFloat(firstNumber);
+      const b = parseFloat(secondNumber);
+      const result = operate(a, b, operator);
+      firstNumber = result.toString()
+      secondNumber = ""
+      displayButton.textContent = firstNumber;
+      console.log("Intermediate result:", firstNumber);
+      
+    }
+    operator = operatorValue;
+    console.log("operator value:", operator);
+    isOperatorClicked = true
+    displayButton.textContent = operator;
   });
-};
+});
 
-// const displayOperator = () => {
-  const operators = keypadContainer.querySelectorAll(".operator");
-  operators.forEach((oper) => {
-    oper.addEventListener("click", (e) => {
-      const operatorValue = e.target.value;
-      console.log("operator value:", operatorValue);
-      operator = operatorValue;
-      isOperatorClicked = true;
+// function when numbers are clicked
+buttons.forEach((butt) => {
+  butt.addEventListener("click", (e) => {
+    const buttonValue = e.target.value;
+    console.log("button value:", typeof buttonValue, buttonValue);
 
-      displayButton.textContent = operator;
-      console.log("display value:", operator);
-    });
+    if (!isOperatorClicked) {
+      firstNumber += buttonValue;
+      displayButton.textContent = firstNumber;
+      console.log("display (first #)", firstNumber);
+      isOperatorClicked = true
+    } else {
+      displayButton.textContent = "";
+      secondNumber += buttonValue;
+      displayButton.textContent = secondNumber;
+      // isOperatorClicked = false;
+
+      console.log("display (second #)", secondNumber);
+    }
   });
-// };
+});
 
 // function when clear button is clicked
 clear.addEventListener("click", () => {
@@ -91,20 +109,36 @@ clear.addEventListener("click", () => {
 
 // function when negate button is clicked
 sign.addEventListener("click", () => {
-  const value = displayButton.textContent
-  const negatedValue = value * -1
-  displayButton.textContent = negatedValue
-  console.log("negated value:", negatedValue)
+  const value = displayButton.textContent;
+  const negatedValue = value * -1;
+  displayButton.textContent = negatedValue;
+  console.log("negated value:", negatedValue);
 });
 
 // function when percentage is clicked
 percent.addEventListener("click", () => {
-  const value = displayButton.textContent
-  const percent = value / 100
-  displayButton.textContent = percent
-  console.log("percentage:", percent)
-})
+  const value = displayButton.textContent;
+  const percent = value / 100;
+  displayButton.textContent = percent;
+  console.log("percentage:", percent);
+});
 
+// function when point is clicked
+point.addEventListener("click", () => {
+  const pointValue = ".";
+  const currentValue = displayButton.textContent;
 
-displayNumbers();
-// displayOperator();
+  if (!currentValue.includes(".")) {
+    const newValue = currentValue + pointValue;
+
+    if (!isOperatorClicked) {
+      firstNumber = newValue;
+      console.log("pointed value:", newValue);
+      displayButton.textContent = firstNumber;
+    } else {
+      secondNumber = newValue;
+      console.log("pointed value:", newValue);
+      displayButton.textContent = secondNumber;
+    }
+  }
+});
